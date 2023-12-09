@@ -7,7 +7,7 @@ build:
     - apt install android-tools-mkbootimg bc bison build-essential ca-certificates cpio curl flex git kmod libssl-dev libtinfo5 python2 sudo unzip wget xz-utils -y --no-install-recommends
     - ln -sf python2.7 /usr/bin/python
     - wget https://raw.githubusercontent.com/LineageOS/android_system_core/lineage-17.1/mkbootimg/mkbootimg.py -O /usr/bin/mkbootimg
-    - git clone https://gitlab.com/ubports/community-ports/halium-generic-adaptation-build-tools -b halium-12 build
+    - git clone https://gitlab.com/ubports/community-ports/halium-generic-adaptation-build-tools -b halium-11 build
     - sed -i '43 i HAS_DYNAMIC_PARTITIONS=true' ./build/make-bootimage.sh
     - ./build/build.sh
   artifacts:
@@ -19,7 +19,7 @@ flashable:
   script:
     - apt update
     - apt install -y git img2simg jq sudo wget xz-utils
-    - git clone https://gitlab.com/ubports/community-ports/halium-generic-adaptation-build-tools -b halium-12 build
+    - git clone https://gitlab.com/ubports/community-ports/halium-generic-adaptation-build-tools -b halium-11 build
     - DEVICE="$(source deviceinfo && echo $deviceinfo_codename)"
     - sed -i '43 i HAS_DYNAMIC_PARTITIONS=true' ./build/make-bootimage.sh
     - ./build/fetch-and-prepare-latest-ota.sh "20.04/arm64/android9/devel" "$DEVICE" ota
@@ -36,7 +36,7 @@ devel-flashable:
   script:
     - apt update
     - apt install -y git img2simg jq sudo wget xz-utils
-    - git clone https://gitlab.com/ubports/community-ports/halium-generic-adaptation-build-tools -b halium-12 build
+    - git clone https://gitlab.com/ubports/community-ports/halium-generic-adaptation-build-tools -b halium-11 build
     - sed -i '43 i HAS_DYNAMIC_PARTITIONS=true' ./build/make-bootimage.sh
     - DEVICE="$(source deviceinfo && echo $deviceinfo_codename)"
     - ./build/prepare-fake-ota.sh out/device_$DEVICE.tar.xz ota
