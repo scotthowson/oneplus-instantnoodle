@@ -6,22 +6,23 @@ This guide provides detailed instructions for setting up a build environment, bu
 - [Ubuntu Touch Device Tree for the OnePlus 8 (instantnoodle)](#ubuntu-touch-device-tree-for-the-oneplus-8-instantnoodle)
   - [Contents](#contents)
   - [Introduction](#introduction)
-  - [Prerequisites and Warnings](#prerequisites-and-warnings)
+    - [Prerequisites and Warnings](#prerequisites-and-warnings)
   - [Setting up Your Build Environment](#setting-up-your-build-environment)
     - [Install dependencies:](#install-dependencies)
   - [How to Build](#how-to-build)
   - [Installation Guide](#installation-guide)
     - [Unlocking Bootloader](#unlocking-bootloader)
-    - [Flashing the System](#flashing-the-system)
+      - [Flashing Recovery](#flashing-recovery)
+      - [Flashing the System](#flashing-the-system)
     - [Chroot Instructions](#chroot-instructions)
-    - [Using System Partition](#using-system-partition)
-      - [Using the chroot script:](#using-the-chroot-script)
-      - [Manually mounting System Partition:](#manually-mounting-system-partition)
-    - [Using Data Partition](#using-data-partition)
-      - [Using the chroot script:](#using-the-chroot-script-1)
-      - [Manually mounting Data Partition:](#manually-mounting-data-partition)
-  - [SSH Connection](#ssh-connection)
-  - [Telnet Connection](#telnet-connection)
+      - [Using System Partition](#using-system-partition)
+        - [Using the chroot script:](#using-the-chroot-script)
+        - [Manually mounting System Partition:](#manually-mounting-system-partition)
+        - [Using Data Partition](#using-data-partition)
+        - [Using the chroot script:](#using-the-chroot-script-1)
+        - [Manually mounting Data Partition:](#manually-mounting-data-partition)
+    - [SSH Connection](#ssh-connection)
+    - [Telnet Connection](#telnet-connection)
   - [Troubleshooting](#troubleshooting)
   - [Contributing](#contributing)
   - [References and Credits](#references-and-credits)
@@ -30,7 +31,7 @@ This guide provides detailed instructions for setting up a build environment, bu
 ## Introduction
 This guide is specifically tailored for the OnePlus 8 device and covers the entire process from setting up the necessary environment to the final installation of Ubuntu Touch. Users are expected to have basic knowledge of Linux command line and Android development tools.
 
-## Prerequisites and Warnings
+### Prerequisites and Warnings
 > [!NOTE] 
 > OnePlus 8 (instantnoodle).
 
@@ -98,8 +99,25 @@ adb reboot fastboot
 fastboot flash cust-unlock unlock_token.bin
 fastboot oem unlock 
 ```
+#### Flashing Recovery
+Prepare your device for flashing:
+```bash
+adb devices
+adb reboot fastboot
+# If you have stock rom you may need to press advanced & enter fastboot again.
+# Orange Fox Recovery
+fastboot flash recovery instantnoodle-extras/recovery/OrangeFox_R11.1-InstantNoodle-Recovery.img
+# TeamWin Recovery (TWRP)
+fastboot flash recovery instantnoodle-extras/recovery/TWRP-InstantNoodle-Recovery.img
+# LineageOS 18.1 Recovery
+fastboot flash recovery instantnoodle-extras/recovery/LineageOS-18.1-Recovery.img
+# Once flashed run:
+fastboot reboot recovery
+```
 
-### Flashing the System
+
+
+#### Flashing the System
 
 Prepare for flashing:
 ```bash
@@ -112,8 +130,8 @@ fastboot flash vbmeta --disable-verity --disable-verification vbmeta.img
 ```
 
 ### Chroot Instructions
-### Using System Partition
-#### Using the chroot script:
+#### Using System Partition
+##### Using the chroot script:
 ```bash
 adb reboot recovery
 adb push chroot-files/chroot-log-system.sh /
@@ -122,7 +140,7 @@ chmod +x ./chroot-log-system.sh
 ./chroot-log-system.sh
 ```
 
-#### Manually mounting System Partition:
+##### Manually mounting System Partition:
 ```bash
 adb reboot recovery
 adb shell
@@ -143,8 +161,8 @@ umount /mnt/system/proc
 umount /mnt/system
 ```
 
-### Using Data Partition
-#### Using the chroot script:
+##### Using Data Partition
+##### Using the chroot script:
 ```bash
 adb reboot recovery
 adb push chroot-files/chroot-log-data.sh /
@@ -153,7 +171,7 @@ chmod +x ./chroot-log-data.sh
 ./chroot-log-data.sh
 ```
 
-#### Manually mounting Data Partition:
+##### Manually mounting Data Partition:
 ```bash
 mkdir /mnt/ubuntu
 mount -o loop /data/ubuntu.img /mnt/ubuntu
@@ -171,7 +189,7 @@ umount /mnt/ubuntu/proc
 umount /mnt/ubuntu
 ```
 
-## SSH Connection
+### SSH Connection
 ```bash
 ip link show
 sudo ip link set down <devicename> && sudo ip link set <devicename> name OnePlus-8 && sudo ip link set up OnePlus-8
@@ -180,7 +198,7 @@ sudo ip link set OnePlus-8 up
 ssh phablet@10.15.19.82
 ```
 
-## Telnet Connection
+### Telnet Connection
 ```bash
 telnet 192.168.2.15
 ```
