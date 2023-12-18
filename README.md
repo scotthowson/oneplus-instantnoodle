@@ -8,42 +8,50 @@ This guide provides detailed instructions for setting up a build environment, bu
   - [Introduction](#introduction)
   - [Prerequisites and Warnings](#prerequisites-and-warnings)
   - [Setting up Your Build Environment](#setting-up-your-build-environment)
+    - [Install dependencies:](#install-dependencies)
   - [How to Build](#how-to-build)
   - [Installation Guide](#installation-guide)
     - [Unlocking Bootloader](#unlocking-bootloader)
     - [Flashing the System](#flashing-the-system)
-  - [Chroot Instructions](#chroot-instructions)
+    - [Chroot Instructions](#chroot-instructions)
     - [Using System Partition](#using-system-partition)
+      - [Using the chroot script:](#using-the-chroot-script)
+      - [Manually mounting System Partition:](#manually-mounting-system-partition)
     - [Using Data Partition](#using-data-partition)
+      - [Using the chroot script:](#using-the-chroot-script-1)
+      - [Manually mounting Data Partition:](#manually-mounting-data-partition)
   - [SSH Connection](#ssh-connection)
   - [Telnet Connection](#telnet-connection)
   - [Troubleshooting](#troubleshooting)
   - [Contributing](#contributing)
   - [References and Credits](#references-and-credits)
   - [Special Thanks](#special-thanks)
-  - [License](#license)
-  - [Formatting and Style](#formatting-and-style)
 
 ## Introduction
 This guide is specifically tailored for the OnePlus 8 device and covers the entire process from setting up the necessary environment to the final installation of Ubuntu Touch. Users are expected to have basic knowledge of Linux command line and Android development tools.
 
 ## Prerequisites and Warnings
-- **Device**: OnePlus 8 (instantnoodle).
-- **Prerequisites**: Unlocked bootloader, root access.
-- **Warning**: Following these instructions can void your warranty and may potentially brick your device. Proceed with caution and understand the risks involved.
+> [!NOTE]OnePlus 8 (instantnoodle).
+
+> [!IMPORTANT] Unlocked bootloader, root access.
+
+> [!WARNING] Following these instructions can void your warranty and may potentially brick your device. Proceed with caution and understand the risks involved.
+
+> [!CAUTION] This guide involves procedures like unlocking the bootloader, flashing firmware, and modifying system components. These actions can potentially lead to negative outcomes, such as voiding your warranty, bricking your device, or compromising its security. Proceed with full understanding of the risks and ensure you follow the instructions carefully.
 
 ## Setting up Your Build Environment
 
 **Requirements**: Ubuntu (20.04 or newer)
 
 **For amd64 architecture (commonly referred to as 64 bit)**:
+
 Enable the i386 architecture:
 ```bash
 sudo dpkg --add-architecture i386
 sudo apt update
 ```
 
-Install dependencies:
+### Install dependencies:
 ```bash
 sudo apt install git gnupg flex bison gperf build-essential \
 zip bzr curl libc6-dev libncurses5-dev:i386 x11proto-core-dev \
@@ -94,17 +102,23 @@ Prepare for flashing:
 adb devices
 adb reboot fastboot
 fastboot delete-logical-partition product_a
-fastboot delete-logical-partition system_ext_a
 fastboot flash boot boot.img
 fastboot flash system system.img
 fastboot flash vbmeta --disable-verity --disable-verification vbmeta.img
 ```
 
-## Chroot Instructions
-
+### Chroot Instructions
 ### Using System Partition
+#### Using the chroot script:
+```bash
+adb reboot recovery
+adb push chroot-files/chroot-log-system.sh /
+adb shell
+chmod +x ./chroot-log-system.sh
+./chroot-log-system.sh
+```
 
-Access the system partition:
+#### Manually mounting System Partition:
 ```bash
 adb reboot recovery
 adb shell
@@ -126,8 +140,7 @@ umount /mnt/system
 ```
 
 ### Using Data Partition
-
-Using the chroot script:
+#### Using the chroot script:
 ```bash
 adb reboot recovery
 adb push chroot-files/chroot-log-data.sh /
@@ -136,46 +149,10 @@ chmod +x ./chroot-log-data.sh
 ./chroot-log-data.sh
 ```
 
-Manually mounting:
-```bashCertainly! I'll enhance your README with the suggested sections and format it for clarity and comprehensibility.
-
-markdown
-
-# Ubuntu Touch Device Tree for the OnePlus 8 (instantnoodle)
-
-This guide provides detailed instructions for setting up a build environment, building the Ubuntu Touch device tree, and installing it on the OnePlus 8, based on Halium 11.0. It is designed for developers and advanced users who wish to run Ubuntu Touch on their OnePlus 8 devices (model: instantnoodle).
-
-## Contents
-- [Introduction](#introduction)
-- [Prerequisites and Warnings](#prerequisites-and-warnings)
-- [Setting up Your Build Environment](#setting-up-your-build-environment)
-- [How to Build](#how-to-build)
-- [Installation Guide](#installation-guide)
-- [Chroot Instructions](#chroot-instructions)
-- [SSH and Telnet Connections](#ssh-and-telnet-connections)
-- [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
-- [References and Credits](#references-and-credits)
-- [License](#license)
-
-## Introduction
-This guide is specifically tailored for the OnePlus 8 device and covers the entire process from setting up the necessary environment to the final installation of Ubuntu Touch. Users are expected to have basic knowledge of Linux command line and Android development tools.
-
-## Prerequisites and Warnings
-- **Device**: OnePlus 8 (instantnoodle).
-- **Prerequisites**: Unlocked bootloader, root access.
-- **Warning**: Following these instructions can void your warranty and may potentially brick your device. Proceed with caution and understand the risks involved.
-
-## Setting up Your Build Environment
-[...]
-
-## How to Build
-[...]
-
-## Installation Guide
-[...]
-
-mount -o loop /data /mnt/ubuntu
+#### Manually mounting Data Partition:
+```bash
+mkdir /mnt/ubuntu
+mount -o loop /data/ubuntu.img /mnt/ubuntu
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
 mount --bind /dev /mnt/ubuntu/dev
 mount --bind /dev/pts /mnt/ubuntu/dev/pts
@@ -192,6 +169,7 @@ umount /mnt/ubuntu
 
 ## SSH Connection
 ```bash
+ip link show
 sudo ip link set down <devicename> && sudo ip link set <devicename> name OnePlus-8 && sudo ip link set up OnePlus-8
 sudo ip address add 10.15.19.100/24 dev OnePlus-8
 sudo ip link set OnePlus-8 up
@@ -207,15 +185,11 @@ telnet 192.168.2.15
 Common issues and their solutions will be listed [here](https://docs.ubports.com/en/latest/porting/configure_test_fix/index.html). If you encounter any problems, refer to this section for guidance.
 
 ## Contributing
-Contributions to this guide are welcome. If you have suggestions or corrections, please submit a pull request or open an issue on the GitHub repository.
+[Contributions](https://docs.ubports.com/en/latest/contribute/index.html) to this guide are welcome. If you have suggestions or corrections, please submit a pull request or open an issue on the GitHub repository.
 
 ## References and Credits
 Acknowledgments to individuals or sources that have contributed to this guide.
 [OnePlus Kebab repository](https://gitlab.com/DaniAsh551/oneplus-kebab) - [DaniAsh551](https://gitlab.com/DaniAsh551)
+
 ## Special Thanks
 A heartfelt thank you to [DaniAsh551](https://gitlab.com/DaniAsh551) and their [OnePlus Kebab repository](https://gitlab.com/DaniAsh551/oneplus-kebab) for their invaluable assistance and patience throughout the development of this project. Their contributions and guidance have been instrumental in its success.
-## License
-This guide is released under the [MIT License](https://opensource.org/licenses/MIT). You are free to use, modify, and distribute it as per the license terms.
-
-## Formatting and Style
-This guide uses Markdown for formatting. Headings, subheadings, bullet points, and code blocks are utilized for better readability and structure.
