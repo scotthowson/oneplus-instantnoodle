@@ -122,6 +122,7 @@ download_chroot_scripts() {
 
     divider
     download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/chroot-log-data.sh" "$chroot_path/chroot-log-data.sh" "wget"
+    download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/chroot-log-data-dd.sh" "$chroot_path/chroot-log-data-dd.sh" "wget"
     download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/chroot-log-system.sh" "$chroot_path/chroot-log-system.sh" "wget"
     download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/README.md" "$chroot_path/README.md" "wget"
     download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/Instantnoodle-Info.log" "$chroot_path/Instantnoodle-Info.log" "wget"

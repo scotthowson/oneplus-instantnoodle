@@ -102,6 +102,9 @@ fastboot oem unlock
 #### Flashing Recovery
 Prepare your device for flashing:
 ```bash
+sudo chmod +x fetch-instantnoodle-recovery-files.sh
+./fetch-instantnoodle-recovery-files.sh
+# Accept both prompts.
 adb devices
 adb reboot fastboot
 # If you have stock rom you may need to press advanced & enter fastboot again.
@@ -192,6 +195,7 @@ umount /mnt/ubuntu
 ### SSH Connection
 ```bash
 ip link show
+# The device name will most likely resemble 'enp0s29u1u1'.
 sudo ip link set down <devicename> && sudo ip link set <devicename> name OnePlus-8 && sudo ip link set up OnePlus-8
 sudo ip address add 10.15.19.100/24 dev OnePlus-8
 sudo ip link set OnePlus-8 up
