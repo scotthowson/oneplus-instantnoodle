@@ -8,7 +8,6 @@ This is based on Halium 11.0
 
 [Install](#install) section.
 
-[Splash Screen](#Splash-screen) section.
 
 
 ## Setting up your build device
@@ -28,16 +27,14 @@ sudo apt update
 ```
 
 Install the required dependencies:
-
 ```bash
 sudo apt install git gnupg flex bison gperf build-essential \
-  zip bzr curl libc6-dev libncurses5-dev:i386 x11proto-core-dev \
-  libx11-dev:i386 libreadline6-dev:i386 libgl1-mesa-glx:i386 \
-  libgl1-mesa-dev g++-multilib mingw-w64-i686-dev tofrodos \
-  python3-markdown libxml2-utils xsltproc zlib1g-dev:i386 schedtool \
-  liblz4-tool bc lzop imagemagick libncurses5 rsync \
-  python-is-python3 libssl-dev clang python2 mkbootimg 
-
+zip bzr curl libc6-dev libncurses5-dev:i386 x11proto-core-dev \
+libx11-dev:i386 libreadline6-dev:i386 libgl1-mesa-glx:i386 \
+libgl1-mesa-dev g++-multilib mingw-w64-i686-dev tofrodos \
+python3-markdown libxml2-utils xsltproc zlib1g-dev:i386 schedtool \
+liblz4-tool bc lzop imagemagick libncurses5 rsync \
+python-is-python3 python2
 ```
 
 Run the following commands to download the repo script and ensure it is executable:
@@ -48,123 +45,131 @@ chmod a+rx ~/bin/repo
 ```
 
 
-
-## How to build
+# How to build
 
 To manually build this project, follow these steps:
-
 ```bash
-sudo chmod +x build.sh && sudo chmod +x build/*
-```
-
-```bash
-export HOSTCC=gcc-9  # the build breaks with gcc-11
-sudo ./build.sh -b instantnoodle  # instantnoodle is the name of the build directory
-sudo ./build/prepare-fake-ota.sh instantnoodle/device_instantnoodle.tar.xz ota 
-sudo ./build/system-image-from-ota.sh ota/ubuntu_command instantnoodle
-
+git clone https://github.com/IllSaft/oneplus-instantnoodle.git
+cd oneplus-instantnoodle
+sudo chmod +x build.sh
+# the build breaks with gcc-11
+export HOSTCC=gcc-9
+# instantnoodle is the name of the build directory
+sudo ./build.sh -b instantnoodle
+sudo ./build/prepare-fake-ota.sh instantnoodle/device_instantnoodle.tar.xz ota
+sudo ./build/system-image-from-ota.sh ota/ubuntu_command out
 # If built successfully your system imgs will be in 'out/'
 ```
 
+# Install
 
-## Building the vendor image
-
-The vendor image is available as a downloadable blob
-[here](https://github.com/ubuntu-touch-violet/ubuntu-touch-violet/releases/tag/20210510).
-If you'd like to build it yourself, the steps are quite similar to those needed
-to build the system image with Halium:
-
-1. Initialize the repo: `repo init -u https://github.com/Halium/android -b halium-11.0 --depth=1`
-2. `repo sync`
-3. Until [this PR](https://github.com/Halium/halium-devices/pull/325) is not
-   merged, you'll have to download the
-   [`fm-bridge`](https://gitlab.com/ubuntu-touch-xiaomi-violet/fm-bridge)
-   repository yourself:
-```
-    mkdir -p vendor/ubports/fm-bridge
-    git clone https://gitlab.com/ubuntu-touch-xiaomi-violet/fm-bridge.git vendor/ubports/fm-bridge
-```
-4. Apply hybris patches: `hybris-patches/apply-patches.sh --mb`
-5. `source build/envsetup.sh && breakfast instantnoodle`
-6. `mka vendorimage`
-
-This will generate a file `out/target/product/instantnoodle/vendor.img` that can be
-flashed with `fastboot flash vendor vendor.img`.
-
-
-
-## Splash screen
-
-If you'd like to change the splash screen, run
-
-```
-./splash/generate.sh out
-fastboot flash splash out/splash.img
-```
-
-
-
-## Install
-
-After the build process has successfully completed, run
-
+## Unlocking Bootloader
 
 ```bash
-# Preparing your device.
+adb devices
+adb reboot fastoot
+fastboot flash cust-unlock unlock_token.bin
+fastboot oem unlock 
+```
+
+### Flashing the System
+
+```bash
+adb devices
 adb reboot fastboot
-fastboot reboot fastboot
-
-# Verify our device is in fastbootd.
-fastboot devices
-# If your device is listed while on stock recovery then proceed to the next steps.
-
-# If you have issues with the device connecting 
-# Check device manager and installing the USB drivers.
-# https://github.com/IllSaft/OP8-USBDRV
-
-# In order to flash our system.img we need to make room for it.
-fastboot delete-logical-partition product_b
-fastboot delete-logical-partition system_ext_b
-
-# Flash boot & system with your built boot.img & system.img.
-fastboot flash boot out/boot.img
-fastboot flash dtbo out/dtbo.img
-fastboot flash system out/system.img
-
-# Flash recovery with TWRP
-fastboot flash recovery out/twrp-3.7.0-instantnoodle.img
-
-# Reboot to Recovery
-fastboot flash recovery out/twrp-3.7.0-instantnoodle.img
+# Wait 
+fastboot delete-logical-partition product_a
+fastboot delete-logical-partition system_ext_a
+fastboot flash boot boot.img
+fastboot flash system system.img
+fastboot flash vbmeta --disable-verity --disable-verification vbmeta.img
 ```
 
-1. 
-Volume Down --> Volume Down --> Power (English) --> Power (Advanced) --> Power (Reboot to fastboot) --> Power (Reboot to fastboot) 
---> Volume Down --> Volume Down --> Power (Recovery Mode) | You Should now be inside TWRP, congrats! give it a minute as it takes a while.
+## Chroot Instructions
+### Using System Part
 
-2. 
-Wipe --> Advnaced Wipe --> ☑️Data --> Repair or Change File System --> Change File System --> EXT4 --> Swipe to Change 
 
-3. 
-Head back to the menu
-Mount --> Data --> Mount USB Storage
-4. 
+
 ```bash
-# Flash recovery with TWRP
-adb push out/rootfs.img /data/
+adb reboot recovery
+
+adb shell
+
+mkdir /mnt/system
+mount -o loop /dev/block/dm-0 /mnt/system
+
+export PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
+
+mount --bind /dev /mnt/system/dev
+mount --bind /dev/pts /mnt/system/dev/pts
+mount --bind /sys /mnt/system/sys
+mount --bind /proc /mnt/system/proc
+
+
+chroot /mnt/system /bin/bash
+
+systemctl mask usb-moded
+systemctl enable usb-tethering
+systemctl enable ssh
+
+exit
+
+umount /mnt/system/dev/pts
+umount /mnt/system/dev
+umount /mnt/system/sys
+umount /mnt/system/proc
+umount /mnt/system
+
 ```
 
-Unmount --> Back --> Reboot --> Fastboot --> Swipe to reboot.
-
+### Using DataPart
+## Using Chroot Script
 ```bash
+adb reboot recovery
 
-fastboot create-logical-partition product_b 0x6000000
-fastboot flash product_b out/product_b.img
-fastboot create-logical-partition system_ext_b 0x6000000
-fastboot flash system_ext_b out/system_ext_b.img
+adb push chroot-files/chroot-log-data.sh /
 
-# Untested (Will verify soon)
-fastboot --disable-verification --disable-verity flash vbmeta vbmeta.img
+adb shell
 
+chmod +x ./chroot-log-data.sh
+
+./chroot-log-data.sh
+```
+
+## Mounting Manually
+```bash
+# Mount the filesystem
+mount -o loop /data /mnt/ubuntu
+# Set up necessary paths
+export PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
+# Bind mount important directories
+mount --bind /dev /mnt/ubuntu/dev
+mount --bind /dev/pts /mnt/ubuntu/dev/pts
+mount --bind /sys /mnt/ubuntu/sys
+mount --bind /proc /mnt/ubuntu/proc
+chroot /mnt/ubuntu /bin/bash
+
+exit
+# Unmount the filesystem
+umount /mnt/ubuntu/dev/pts
+umount /mnt/ubuntu/dev
+umount /mnt/ubuntu/sys
+umount /mnt/ubuntu/proc
+umount /mnt/ubuntu
+```
+
+## SSH Connection
+```bash
+sudo ip link set down <devicename> && sudo ip link set <devicename> name OnePlus-8 && sudo ip link set up OnePlus-8
+
+sudo ip address add 10.15.19.100/24 dev OnePlus-8
+
+sudo ip link set OnePlus-8 up
+
+ssh phablet@10.15.19.82
+```
+## Telnet Connection
+```bash
+telnet 192.168.2.15
 ```
 

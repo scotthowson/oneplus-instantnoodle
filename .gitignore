@@ -1,6 +1,5 @@
 out/
+ota/
 build/
 Instantnoodle-Extras/
-bd/
-bd2/
-op8/
+chroot-files/chroot-log.sh
