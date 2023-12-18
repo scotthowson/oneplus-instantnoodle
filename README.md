@@ -1,51 +1,53 @@
-# Ubuntu Touch device tree for the OnePlus 8 (instantnoodle)
+# Ubuntu Touch Device Tree for the OnePlus 8 (instantnoodle)
 
-This is based on Halium 11.0
+This repository contains the Ubuntu Touch device tree for the OnePlus 8, based on Halium 11.0. It provides all the necessary instructions and scripts for building and installing Ubuntu Touch on the OnePlus 8 device, a process tailored for developers and advanced users.
 
-[Setting up your build device](#setting-up-your-build-device) section.
+## Contents
+- [Ubuntu Touch Device Tree for the OnePlus 8 (instantnoodle)](#ubuntu-touch-device-tree-for-the-oneplus-8-instantnoodle)
+  - [Contents](#contents)
+  - [Setting up Your Build Environment](#setting-up-your-build-environment)
+    - [Steps](#steps)
+  - [How to Build](#how-to-build)
+- [Install](#install)
+  - [Unlocking Bootloader](#unlocking-bootloader)
+    - [Flashing the System](#flashing-the-system)
+  - [Chroot Instructions](#chroot-instructions)
+    - [Using System Part](#using-system-part)
+    - [Using DataPart](#using-datapart)
+  - [Using Chroot Script](#using-chroot-script)
+  - [Mounting Manually](#mounting-manually)
+  - [SSH Connection](#ssh-connection)
+  - [Telnet Connection](#telnet-connection)
 
-[How to build](#How-to-build) section.
+## Setting up Your Build Environment
 
-[Install](#install) section.
+> **Warning**: Ensure you are using Ubuntu 20.04 or newer for compatibility.
 
+### Steps
+1. **Enable the i386 architecture** (for 64-bit systems):
+    ```bash
+    sudo dpkg --add-architecture i386
+    sudo apt update
+    ```
 
+2. **Install the required dependencies**:
+    ```bash
+    sudo apt install git gnupg flex bison gperf build-essential \
+    zip bzr curl libc6-dev libncurses5-dev:i386 x11proto-core-dev \
+    libx11-dev:i386 libreadline6-dev:i386 libgl1-mesa-glx:i386 \
+    libgl1-mesa-dev g++-multilib mingw-w64-i686-dev tofrodos \
+    python3-markdown libxml2-utils xsltproc zlib1g-dev:i386 schedtool \
+    liblz4-tool bc lzop imagemagick libncurses5 rsync \
+    python-is-python3 python2
+    ```
 
-## Setting up your build device
+3. **Set up the repo tool**:
+    ```bash
+    curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+    chmod a+rx ~/bin/repo
+    ```
 
-Ubuntu (20.04 or newer)
-
-If you are on the amd64 architecture (commonly referred to as 64 bit), enable the usage of the i386 architecture:
-
-```bash
-sudo dpkg --add-architecture i386
-```
-
-Update your package lists to take advantage of the new architecture:
-
-```bash
-sudo apt update
-```
-
-Install the required dependencies:
-```bash
-sudo apt install git gnupg flex bison gperf build-essential \
-zip bzr curl libc6-dev libncurses5-dev:i386 x11proto-core-dev \
-libx11-dev:i386 libreadline6-dev:i386 libgl1-mesa-glx:i386 \
-libgl1-mesa-dev g++-multilib mingw-w64-i686-dev tofrodos \
-python3-markdown libxml2-utils xsltproc zlib1g-dev:i386 schedtool \
-liblz4-tool bc lzop imagemagick libncurses5 rsync \
-python-is-python3 python2
-```
-
-Run the following commands to download the repo script and ensure it is executable:
-
-```bash
-curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-chmod a+rx ~/bin/repo
-```
-
-
-# How to build
+## How to Build
 
 To manually build this project, follow these steps:
 ```bash
