@@ -1,10 +1,12 @@
 # Ubuntu Touch Device Tree for the OnePlus 8 (instantnoodle)
 
-This project is based on Halium 11.0 and provides instructions for setting up a build environment, building the device tree, and installing Ubuntu Touch on the OnePlus 8.
+This guide provides detailed instructions for setting up a build environment, building the Ubuntu Touch device tree, and installing it on the OnePlus 8, based on Halium 11.0. It is designed for developers and advanced users who wish to run Ubuntu Touch on their OnePlus 8 devices (model: instantnoodle).
 
 ## Contents
 - [Ubuntu Touch Device Tree for the OnePlus 8 (instantnoodle)](#ubuntu-touch-device-tree-for-the-oneplus-8-instantnoodle)
   - [Contents](#contents)
+  - [Introduction](#introduction)
+  - [Prerequisites and Warnings](#prerequisites-and-warnings)
   - [Setting up Your Build Environment](#setting-up-your-build-environment)
   - [How to Build](#how-to-build)
   - [Installation Guide](#installation-guide)
@@ -15,6 +17,20 @@ This project is based on Halium 11.0 and provides instructions for setting up a 
     - [Using Data Partition](#using-data-partition)
   - [SSH Connection](#ssh-connection)
   - [Telnet Connection](#telnet-connection)
+  - [Troubleshooting](#troubleshooting)
+  - [Contributing](#contributing)
+  - [References and Credits](#references-and-credits)
+  - [Special Thanks](#special-thanks)
+  - [License](#license)
+  - [Formatting and Style](#formatting-and-style)
+
+## Introduction
+This guide is specifically tailored for the OnePlus 8 device and covers the entire process from setting up the necessary environment to the final installation of Ubuntu Touch. Users are expected to have basic knowledge of Linux command line and Android development tools.
+
+## Prerequisites and Warnings
+- **Device**: OnePlus 8 (instantnoodle).
+- **Prerequisites**: Unlocked bootloader, root access.
+- **Warning**: Following these instructions can void your warranty and may potentially brick your device. Proceed with caution and understand the risks involved.
 
 ## Setting up Your Build Environment
 
@@ -121,7 +137,44 @@ chmod +x ./chroot-log-data.sh
 ```
 
 Manually mounting:
-```bash
+```bashCertainly! I'll enhance your README with the suggested sections and format it for clarity and comprehensibility.
+
+markdown
+
+# Ubuntu Touch Device Tree for the OnePlus 8 (instantnoodle)
+
+This guide provides detailed instructions for setting up a build environment, building the Ubuntu Touch device tree, and installing it on the OnePlus 8, based on Halium 11.0. It is designed for developers and advanced users who wish to run Ubuntu Touch on their OnePlus 8 devices (model: instantnoodle).
+
+## Contents
+- [Introduction](#introduction)
+- [Prerequisites and Warnings](#prerequisites-and-warnings)
+- [Setting up Your Build Environment](#setting-up-your-build-environment)
+- [How to Build](#how-to-build)
+- [Installation Guide](#installation-guide)
+- [Chroot Instructions](#chroot-instructions)
+- [SSH and Telnet Connections](#ssh-and-telnet-connections)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [References and Credits](#references-and-credits)
+- [License](#license)
+
+## Introduction
+This guide is specifically tailored for the OnePlus 8 device and covers the entire process from setting up the necessary environment to the final installation of Ubuntu Touch. Users are expected to have basic knowledge of Linux command line and Android development tools.
+
+## Prerequisites and Warnings
+- **Device**: OnePlus 8 (instantnoodle).
+- **Prerequisites**: Unlocked bootloader, root access.
+- **Warning**: Following these instructions can void your warranty and may potentially brick your device. Proceed with caution and understand the risks involved.
+
+## Setting up Your Build Environment
+[...]
+
+## How to Build
+[...]
+
+## Installation Guide
+[...]
+
 mount -o loop /data /mnt/ubuntu
 export PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
 mount --bind /dev /mnt/ubuntu/dev
@@ -149,3 +202,20 @@ ssh phablet@10.15.19.82
 ```bash
 telnet 192.168.2.15
 ```
+
+## Troubleshooting
+Common issues and their solutions will be listed [here](https://docs.ubports.com/en/latest/porting/configure_test_fix/index.html). If you encounter any problems, refer to this section for guidance.
+
+## Contributing
+Contributions to this guide are welcome. If you have suggestions or corrections, please submit a pull request or open an issue on the GitHub repository.
+
+## References and Credits
+Acknowledgments to individuals or sources that have contributed to this guide.
+[OnePlus Kebab repository](https://gitlab.com/DaniAsh551/oneplus-kebab) - [DaniAsh551](https://gitlab.com/DaniAsh551)
+## Special Thanks
+A heartfelt thank you to [DaniAsh551](https://gitlab.com/DaniAsh551) and their [OnePlus Kebab repository](https://gitlab.com/DaniAsh551/oneplus-kebab) for their invaluable assistance and patience throughout the development of this project. Their contributions and guidance have been instrumental in its success.
+## License
+This guide is released under the [MIT License](https://opensource.org/licenses/MIT). You are free to use, modify, and distribute it as per the license terms.
+
+## Formatting and Style
+This guide uses Markdown for formatting. Headings, subheadings, bullet points, and code blocks are utilized for better readability and structure.
