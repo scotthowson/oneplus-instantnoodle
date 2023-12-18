@@ -1,12 +1,36 @@
 #!/bin/bash
 
 # ANSI color codes
+BLACK='\033[0;30m'
 RED='\033[0;31m'
 GREEN='\033[0;32m'
+YELLOW='\033[0;33m'
 BLUE='\033[0;34m'
+MAGENTA='\033[0;35m'
 CYAN='\033[0;36m'
-YELLOW='\033[1;33m'
-MAGENTA='\033[1;35m'
+WHITE='\033[0;37m'
+
+# Bold ANSI color codes
+BOLD_BLACK='\033[1;30m'
+BOLD_RED='\033[1;31m'
+BOLD_GREEN='\033[1;32m'
+BOLD_YELLOW='\033[1;33m'
+BOLD_BLUE='\033[1;34m'
+BOLD_MAGENTA='\033[1;35m'
+BOLD_CYAN='\033[1;36m'
+BOLD_WHITE='\033[1;37m'
+
+# Background ANSI color codes
+BG_BLACK='\033[40m'
+BG_RED='\033[41m'
+BG_GREEN='\033[42m'
+BG_YELLOW='\033[43m'
+BG_BLUE='\033[44m'
+BG_MAGENTA='\033[45m'
+BG_CYAN='\033[46m'
+BG_WHITE='\033[47m'
+
+# Reset ANSI color code
 NC='\033[0m' # No Color
 
 # Function to display a colored message
@@ -18,7 +42,7 @@ echo_color() {
 
 # Decorative divider
 divider() {
-    echo_color $CYAN "------------------------------------------------"
+    echo -e "${BOLD_CYAN}————————————————————————————————————————————————————————————————————————————————${NC}"
 }
 
 download_file() {
@@ -71,6 +95,13 @@ prompt_user() {
     esac
 }
 
+# Added initial prompt for debugging
+initial_prompt() {
+    echo_color $BLUE "Starting Instantnoodle Extras Download Tool. Press any key to continue..."
+    read -n 1 -s
+    echo ""
+}
+
 check_and_download_chroot_scripts() {
     local chroot_path="instantnoodle-extras/chroot"
 
@@ -78,6 +109,7 @@ check_and_download_chroot_scripts() {
         if prompt_user "📁 Chroot scripts already exist. Would you like to redownload them? (y/n): "; then
             download_chroot_scripts "$chroot_path"
         else
+            divider
             echo_color $BLUE "🔄 Chroot scripts not redownloaded."
         fi
     else
@@ -105,6 +137,7 @@ clone_repository() {
         if prompt_user "🔍 Repository $repo_path already exists. Would you like to re-clone it? (y/n): "; then
             rm -rf "$repo_path"
         else
+            divider
             echo_color $BLUE "🔄 Repository not re-cloned."
             return
         fi
@@ -115,17 +148,20 @@ clone_repository() {
     git clone https://github.com/Halium/halium-boot.git "$repo_path" &> /dev/null || { echo_color $RED "❌ Failed to clone repository"; exit 1; }
     download_file "https://raw.githubusercontent.com/IllSaft/halium_kernel_oneplus_sm8250/halium-11.0/arch/arm64/configs/vendor/instantnoodle_user_defconfig" "$repo_path/instantnoodle_user_defconfig" "wget"
     rm "$repo_path/Android.mk" "$repo_path/get-initrd.sh" "$repo_path/LICENSE" "$repo_path/README.md"
+    divider
     echo_color $GREEN "✅ Repository cloned successfully."
 }
 
 main() {
+    initial_prompt
     echo_color $CYAN "🐧 Starting the OnePlus 8 Instantnoodle Extras Download Tool Setup Script..."
-    mkdir -p instantnoodle-extras/halium-boot instantnoodle-extras/chroot instantnoodle-extras/recovery || { echo_color $RED "❌ Failed to create directories"; exit 1; }
+    mkdir -p instantnoodle-extras/chroot instantnoodle-extras/recovery || { echo_color $RED "❌ Failed to create directories"; exit 1; }
     cd instantnoodle-extras/recovery || { echo_color $RED "❌ Failed to change directory"; exit 1; }
     if [ -f OrangeFox_R11.1-InstantNoodle-Recovery.img ] && [ -f TWRP-InstantNoodle-Recovery.img ] && [ -f LineageOS-18.1-Recovery.img ]; then
         if prompt_user "📂 Recovery files already exist. Would you like to redownload them? (y/n): "; then
             download_files
         else
+            divider
             echo_color $BLUE "🔄 Recovery files not redownloaded."
         fi
     else
@@ -136,5 +172,6 @@ main() {
     clone_repository
     check_and_download_chroot_scripts
     echo_color $GREEN "OnePlus 8 Instantnoodle Extras Download Tool Finished."
+    echo_color  $MAGENTA"Good-bye. ${NC}👋"
 }
 main
