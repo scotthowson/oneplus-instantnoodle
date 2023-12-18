@@ -18,7 +18,7 @@ This guide provides detailed instructions for setting up a build environment, bu
       - [Using System Partition](#using-system-partition)
         - [Using the chroot script:](#using-the-chroot-script)
         - [Manually mounting System Partition:](#manually-mounting-system-partition)
-        - [Using Data Partition](#using-data-partition)
+      - [Using Data Partition](#using-data-partition)
         - [Using the chroot script:](#using-the-chroot-script-1)
         - [Manually mounting Data Partition:](#manually-mounting-data-partition)
     - [SSH Connection](#ssh-connection)
@@ -161,7 +161,7 @@ umount /mnt/system/proc
 umount /mnt/system
 ```
 
-##### Using Data Partition
+#### Using Data Partition
 ##### Using the chroot script:
 ```bash
 adb reboot recovery
