@@ -31,13 +31,17 @@ This guide provides detailed instructions for setting up a build environment, bu
 This guide is specifically tailored for the OnePlus 8 device and covers the entire process from setting up the necessary environment to the final installation of Ubuntu Touch. Users are expected to have basic knowledge of Linux command line and Android development tools.
 
 ## Prerequisites and Warnings
-> [!NOTE]OnePlus 8 (instantnoodle).
+> [!NOTE] 
+> OnePlus 8 (instantnoodle).
 
-> [!IMPORTANT] Unlocked bootloader, root access.
+> [!IMPORTANT]
+> Unlocked bootloader, root access.
 
-> [!WARNING] Following these instructions can void your warranty and may potentially brick your device. Proceed with caution and understand the risks involved.
+> [!WARNING]
+> Following these instructions can void your warranty and may potentially brick your device. Proceed with caution and understand the risks involved.
 
-> [!CAUTION] This guide involves procedures like unlocking the bootloader, flashing firmware, and modifying system components. These actions can potentially lead to negative outcomes, such as voiding your warranty, bricking your device, or compromising its security. Proceed with full understanding of the risks and ensure you follow the instructions carefully.
+> [!CAUTION]
+> This guide involves procedures like unlocking the bootloader, flashing firmware, and modifying system components. These actions can potentially lead to negative outcomes, such as voiding your warranty, bricking your device, or compromising its security. Proceed with full understanding of the risks and ensure you follow the instructions carefully.
 
 ## Setting up Your Build Environment
 
