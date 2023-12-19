@@ -5,22 +5,29 @@ This guide provides detailed instructions for setting up a build environment, bu
 ## Contents
 - [Ubuntu Touch Device Tree for the OnePlus 8 (instantnoodle)](#ubuntu-touch-device-tree-for-the-oneplus-8-instantnoodle)
   - [Contents](#contents)
-  - [Introduction](#introduction)
-    - [Prerequisites and Warnings](#prerequisites-and-warnings)
+- [Introduction](#introduction)
+  - [Prerequisites and Warnings](#prerequisites-and-warnings)
   - [Setting up Your Build Environment](#setting-up-your-build-environment)
-    - [Install dependencies:](#install-dependencies)
-  - [How to Build](#how-to-build)
+  - [Install dependencies:](#install-dependencies)
+    - [How to Build](#how-to-build)
   - [Installation Guide](#installation-guide)
     - [Unlocking Bootloader](#unlocking-bootloader)
-      - [Flashing Recovery](#flashing-recovery)
-      - [Flashing the System](#flashing-the-system)
-    - [Chroot Instructions](#chroot-instructions)
-      - [Using System Partition](#using-system-partition)
-        - [Using the chroot script:](#using-the-chroot-script)
+  - [How to Flash Recovery](#how-to-flash-recovery)
+    - [Flashing Recovery](#flashing-recovery)
+  - [How to Flash](#how-to-flash)
+    - [Using System Partition](#using-system-partition)
+      - [Chroot Instructions](#chroot-instructions)
+        - [Using the System Partition chroot script:](#using-the-system-partition-chroot-script)
         - [Manually mounting System Partition:](#manually-mounting-system-partition)
-      - [Using Data Partition](#using-data-partition)
-        - [Using the chroot script:](#using-the-chroot-script-1)
-        - [Manually mounting Data Partition:](#manually-mounting-data-partition)
+    - [Using Userdata Partition DD method](#using-userdata-partition-dd-method)
+      - [Chroot Instructions](#chroot-instructions-1)
+        - [Using the Userdata Partition DD chroot script:](#using-the-userdata-partition-dd-chroot-script)
+        - [Manually mounting Data Partition DD method:](#manually-mounting-data-partition-dd-method)
+    - [Using Userdata Partition ADB push method](#using-userdata-partition-adb-push-method)
+      - [Chroot Instructions](#chroot-instructions-2)
+        - [Using the Userdata Partition chroot script:](#using-the-userdata-partition-chroot-script)
+        - [Manually mounting Data Partition ADB push method:](#manually-mounting-data-partition-adb-push-method)
+  - [Getting Started with SSH \& Telnet!](#getting-started-with-ssh--telnet)
     - [SSH Connection](#ssh-connection)
     - [Telnet Connection](#telnet-connection)
   - [Troubleshooting](#troubleshooting)
@@ -28,19 +35,14 @@ This guide provides detailed instructions for setting up a build environment, bu
   - [References and Credits](#references-and-credits)
   - [Special Thanks](#special-thanks)
 
-## Introduction
+# Introduction
 This guide is specifically tailored for the OnePlus 8 device and covers the entire process from setting up the necessary environment to the final installation of Ubuntu Touch. Users are expected to have basic knowledge of Linux command line and Android development tools.
 
-### Prerequisites and Warnings
+## Prerequisites and Warnings
 > [!NOTE] 
 > OnePlus 8 (instantnoodle).
 
-> [!IMPORTANT]
-> Unlocked bootloader, root access.
-
-> [!WARNING]
-> Following these instructions can void your warranty and may potentially brick your device. Proceed with caution and understand the risks involved.
-
+> [!IMPORTANT]s
 > [!CAUTION]
 > This guide involves procedures like unlocking the bootloader, flashing firmware, and modifying system components. These actions can potentially lead to negative outcomes, such as voiding your warranty, bricking your device, or compromising its security. Proceed with full understanding of the risks and ensure you follow the instructions carefully.
 
@@ -56,7 +58,7 @@ sudo dpkg --add-architecture i386
 sudo apt update
 ```
 
-### Install dependencies:
+## Install dependencies:
 ```bash
 sudo apt install git gnupg flex bison gperf build-essential \
 zip bzr curl libc6-dev libncurses5-dev:i386 x11proto-core-dev \
@@ -73,7 +75,7 @@ curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
 chmod a+rx ~/bin/repo
 ```
 
-## How to Build
+### How to Build
 
 To build this project:
 ```bash
@@ -99,7 +101,8 @@ adb reboot fastboot
 fastboot flash cust-unlock unlock_token.bin
 fastboot oem unlock 
 ```
-#### Flashing Recovery
+## How to Flash Recovery
+### Flashing Recovery
 Prepare your device for flashing:
 ```bash
 sudo chmod +x fetch-instantnoodle-recovery-files.sh
@@ -120,9 +123,8 @@ fastboot reboot recovery
 
 
 
-#### Flashing the System
-
-Prepare for flashing:
+## How to Flash
+### Using System Partition
 ```bash
 adb devices
 adb reboot fastboot
@@ -131,10 +133,8 @@ fastboot flash boot boot.img
 fastboot flash system system.img
 fastboot flash vbmeta --disable-verity --disable-verification vbmeta.img
 ```
-
-### Chroot Instructions
-#### Using System Partition
-##### Using the chroot script:
+#### Chroot Instructions
+##### Using the System Partition chroot script:
 ```bash
 adb reboot recovery
 adb push chroot-files/chroot-log-system.sh /
@@ -142,7 +142,6 @@ adb shell
 chmod +x ./chroot-log-system.sh
 ./chroot-log-system.sh
 ```
-
 ##### Manually mounting System Partition:
 ```bash
 adb reboot recovery
@@ -157,15 +156,68 @@ mount --bind /proc /mnt/system/proc
 chroot /mnt/system /bin/bash
 # [Additional chroot commands]
 exit
-umount /mnt/system/dev/pts
-umount /mnt/system/dev
-umount /mnt/system/sys
-umount /mnt/system/proc
-umount /mnt/system
+umount -l /mnt/system/dev/pts
+umount -l /mnt/system/dev
+umount -l /mnt/system/sys
+umount -l /mnt/system/proc
+umount -l /mnt/system
 ```
 
-#### Using Data Partition
-##### Using the chroot script:
+
+### Using Userdata Partition DD method
+```bash
+adb devices
+adb reboot fastboot
+fastboot flash boot boot.img
+fastboot reboot recovery
+adb push out/ubuntu.img /sdcard/
+dd if=/sdcard/ubuntu.img of=/dev/block/by-name/userdata
+fastboot flash vbmeta --disable-verity --disable-verification vbmeta.img
+```
+#### Chroot Instructions
+##### Using the Userdata Partition DD chroot script:
+```bash
+adb reboot recovery
+adb push chroot-files/chroot-log-data-dd.sh /
+adb shell
+mkdir -p /tmp/data; mount /dev/block/by-name/userdata /tmp/data
+chmod +x ./chroot-log-data-dd.sh
+./chroot-log-data-dd.sh
+```
+##### Manually mounting Data Partition DD method:
+```bash
+mkdir /data
+mount -o loop /dev/block/by-name/userdata /data
+export PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
+mount --bind /dev /data/dev
+mount --bind /dev/pts /data/dev/pts
+mount --bind /sys /data/sys
+mount --bind /proc /data/proc
+chroot /data /bin/bash
+exit
+# Once done, unmount all partitions.
+umount -l /data/dev/pts
+umount -l /data/dev
+umount -l /data/sys
+umount -l /data/proc
+umount -l /data
+```
+
+### Using Userdata Partition ADB push method
+```bash
+adb devices
+adb reboot fastboot
+fastboot flash boot boot.img
+fastboot reboot recovery
+# Veryify device is in 'Recovery' mode.
+adb devices
+adb push out/ubuntu.img /data/
+fastboot flash boot boot.img
+fastboot flash system system.img
+fastboot flash vbmeta --disable-verity --disable-verification vbmeta.img
+```
+#### Chroot Instructions
+##### Using the Userdata Partition chroot script:
 ```bash
 adb reboot recovery
 adb push chroot-files/chroot-log-data.sh /
@@ -173,8 +225,7 @@ adb shell
 chmod +x ./chroot-log-data.sh
 ./chroot-log-data.sh
 ```
-
-##### Manually mounting Data Partition:
+##### Manually mounting Data Partition ADB push method:
 ```bash
 mkdir /mnt/ubuntu
 mount -o loop /data/ubuntu.img /mnt/ubuntu
@@ -185,18 +236,28 @@ mount --bind /sys /mnt/ubuntu/sys
 mount --bind /proc /mnt/ubuntu/proc
 chroot /mnt/ubuntu /bin/bash
 exit
-umount /mnt/ubuntu/dev/pts
-umount /mnt/ubuntu/dev
-umount /mnt/ubuntu/sys
-umount /mnt/ubuntu/proc
-umount /mnt/ubuntu
+# Once done, unmount all partitions.
+umount -l /mnt/ubuntu/dev/pts
+umount -l /mnt/ubuntu/dev
+umount -l /mnt/ubuntu/sys
+umount -l /mnt/ubuntu/proc
+umount -l /mnt/ubuntu
+```
+
+## Getting Started with SSH & Telnet!
+First we will be setting the device to be called OnePlus-8
+```bash
+ip route show
+# The device name will most likely resemble 'enp0s29u1u1'.
+sudo sh -c 'ip link set down dev <devicename> && ip link set dev <devicename> name OnePlus-8 && ip link set up dev OnePlus-8'
+# Once done we will run this command to verify that we see '192.168.2.0/24 dev OnePlus-8 proto kernel ...'
+ip route show
 ```
 
 ### SSH Connection
 ```bash
-ip link show
-# The device name will most likely resemble 'enp0s29u1u1'.
-sudo ip link set down <devicename> && sudo ip link set <devicename> name OnePlus-8 && sudo ip link set up OnePlus-8
+sudo sh -c 'ip link set dev OnePlus-8 up && ip address add 10.15.19.82 dev OnePlus-8 && ip route add 10.15.19.100 dev OnePlus-8'
+
 sudo ip address add 10.15.19.100/24 dev OnePlus-8
 sudo ip link set OnePlus-8 up
 ssh phablet@10.15.19.82
@@ -204,11 +265,27 @@ ssh phablet@10.15.19.82
 
 ### Telnet Connection
 ```bash
+sudo sh -c 'ip link set dev OnePlus-8 up && ip address add 192.168.2.20 dev OnePlus-8 && ip route add 192.168.2.15 dev OnePlus-8'
+
+ip link set OnePlus-8 address 02:11:22:33:44:55
+ip address add 10.15.19.100/24 dev OnePlus-8
+ip link set OnePlus-8 up
+
+ip r
+
 telnet 192.168.2.15
 ```
 
 ## Troubleshooting
 Common issues and their solutions will be listed [here](https://docs.ubports.com/en/latest/porting/configure_test_fix/index.html). If you encounter any problems, refer to this section for guidance.
+
+```bash
+# you can try to chroot the into rootfs and perform:
+systemctl mask usb-moded
+systemctl enable usb-tethering
+systemctl enable ssh
+```
+
 
 ## Contributing
 [Contributions](https://docs.ubports.com/en/latest/contribute/index.html) to this guide are welcome. If you have suggestions or corrections, please submit a pull request or open an issue on the GitHub repository.
