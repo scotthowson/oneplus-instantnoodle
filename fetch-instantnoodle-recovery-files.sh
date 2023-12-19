@@ -124,6 +124,7 @@ download_chroot_scripts() {
     download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/chroot-log-data.sh" "$chroot_path/chroot-log-data.sh" "wget"
     download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/chroot-log-data-dd.sh" "$chroot_path/chroot-log-data-dd.sh" "wget"
     download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/chroot-log-system.sh" "$chroot_path/chroot-log-system.sh" "wget"
+    download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/telnet.sh" "$chroot_path/telnet.sh" "wget"
     download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/README.md" "$chroot_path/README.md" "wget"
     download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/Instantnoodle-Info" "$chroot_path/Instantnoodle-Info.log" "wget"
     download_file "https://raw.githubusercontent.com/IllSaft/instantnoodle-chroot/main/Instantnoodle-Recovery.log" "instantnoodle-extras/recovery/Instantnoodle-Recovery.log" "wget"
