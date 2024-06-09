@@ -282,6 +282,9 @@ Common issues and their solutions will be listed [here](https://docs.ubports.com
 ```bash
 # you can try to chroot the into rootfs and perform:
 systemctl mask usb-moded
+systemctl add-wants sysinit.target usb-tethering
+systemctl add-wants sysinit.target usb-moded-ssh
+systemctl mask usb-moded
 systemctl enable usb-tethering
 systemctl enable ssh
 ```
