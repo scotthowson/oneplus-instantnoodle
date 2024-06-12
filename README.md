@@ -82,12 +82,10 @@ To build this project:
 git clone https://github.com/IllSaft/oneplus-instantnoodle.git
 cd oneplus-instantnoodle
 sudo chmod +x build.sh
-# Note: The build breaks with gcc-11
-export HOSTCC=gcc-9
 sudo ./build.sh -b instantnoodle
-sudo ./build/prepare-fake-ota.sh instantnoodle/device_instantnoodle.tar.xz ota
-sudo ./build/system-image-from-ota.sh ota/ubuntu_command out
-# If built successfully, your system images will be in 'out/'
+sudo ./build/prepare-fake-ota.sh out/device_instantnoodle_usrmerge.tar.xz ota
+sudo ./build/system-image-from-ota.sh ota/ubuntu_command images
+# If built successfully, your system images will be in 'images/'
 ```
 
 ## Installation Guide

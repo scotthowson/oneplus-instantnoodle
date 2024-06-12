@@ -1,6 +1,8 @@
 out/
 ota/
 build/
+instantnoodle/
+oneplus/
 instantnoodle-extras/
 chroot-files/chroot-log.sh
 fetch-instantnoodle-recovery-files-working.sh

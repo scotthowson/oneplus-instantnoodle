@@ -1,3 +1,7 @@
+variables:
+  # Branch of https://gitlab.com/ubports/porting/community-ports/halium-generic-adaptation-build-tools
+  ADAPTATION_TOOLS_BRANCH: main
+
 image: ubuntu:20.04
 
 build:
@@ -7,7 +11,10 @@ build:
     - apt install android-tools-mkbootimg bc bison build-essential ca-certificates cpio curl flex git kmod libssl-dev libtinfo5 python2 sudo unzip wget xz-utils -y --no-install-recommends
     - ln -sf python2.7 /usr/bin/python
     - wget https://raw.githubusercontent.com/LineageOS/android_system_core/lineage-17.1/mkbootimg/mkbootimg.py -O /usr/bin/mkbootimg
-    - git clone https://gitlab.com/ubports/community-ports/halium-generic-adaptation-build-tools -b halium-12 build
+    - >-
+      git clone -b $ADAPTATION_TOOLS_BRANCH
+      https://gitlab.com/ubports/porting/community-ports/halium-generic-adaptation-build-tools.git
+      build
     - sed -i '43 i HAS_DYNAMIC_PARTITIONS=true' ./build/make-bootimage.sh
     - ./build/build.sh
   artifacts:
@@ -19,7 +26,10 @@ flashable:
   script:
     - apt update
     - apt install -y git img2simg jq sudo wget xz-utils
-    - git clone https://gitlab.com/ubports/community-ports/halium-generic-adaptation-build-tools -b halium-12 build
+    - >-
+      git clone -b $ADAPTATION_TOOLS_BRANCH
+      https://gitlab.com/ubports/porting/community-ports/halium-generic-adaptation-build-tools.git
+      build
     - DEVICE="$(source deviceinfo && echo $deviceinfo_codename)"
     - sed -i '43 i HAS_DYNAMIC_PARTITIONS=true' ./build/make-bootimage.sh
     - ./build/fetch-and-prepare-latest-ota.sh "20.04/arm64/android9/devel" "$DEVICE" ota
@@ -36,14 +46,17 @@ devel-flashable:
   script:
     - apt update
     - apt install -y git img2simg jq sudo wget xz-utils
-    - git clone https://gitlab.com/ubports/community-ports/halium-generic-adaptation-build-tools -b halium-12 build
+    - >-
+      git clone -b $ADAPTATION_TOOLS_BRANCH
+      https://gitlab.com/ubports/porting/community-ports/halium-generic-adaptation-build-tools.git
+      build
     - sed -i '43 i HAS_DYNAMIC_PARTITIONS=true' ./build/make-bootimage.sh
     - DEVICE="$(source deviceinfo && echo $deviceinfo_codename)"
     - ./build/prepare-fake-ota.sh out/device_$DEVICE.tar.xz ota
     - mkdir -p out
     - ./build/system-image-from-ota.sh ota/ubuntu_command out
-    - mv out/rootfs.img out/ubuntu.img
-    - echo 'Skipping cat out/ubuntu.img | gzip -c > out/ubuntu.img.gz'
+    # Add a check to confirm rootfs.img exists before renaming
+    - if [ -f out/rootfs.img ]; then mv out/rootfs.img out/ubuntu.img; else echo "rootfs.img not found!"; fi
     - cat out/boot.img | gzip -c > out/boot.img.gz
     - cat out/system.img | gzip -c > out/system.img.gz
   artifacts:
