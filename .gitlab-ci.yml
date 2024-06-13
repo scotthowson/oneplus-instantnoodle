@@ -57,6 +57,7 @@ devel-flashable:
     - ./build/system-image-from-ota.sh ota/ubuntu_command out
     # Add a check to confirm rootfs.img exists before renaming
     - if [ -f out/rootfs.img ]; then mv out/rootfs.img out/ubuntu.img; else echo "rootfs.img not found!"; fi
+    - echo 'Skipping cat out/ubuntu.img | gzip -c > out/ubuntu.img.gz'
     - cat out/boot.img | gzip -c > out/boot.img.gz
     - cat out/system.img | gzip -c > out/system.img.gz
   artifacts:

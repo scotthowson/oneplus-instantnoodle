@@ -1,0 +1,13 @@
+instantnoodle:
+    Names:
+      - OnePlus8
+      - OnePlus8Pro
+      - instantnoodle
+      - instantnoodlep
+    PrettyName: OnePlus8
+    DeviceType: phone
+    GridUnit: 21
+    SupportedOrientation:
+      - Portrait
+      - Landscape
+      - InvertedLandscape

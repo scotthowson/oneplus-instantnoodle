@@ -1,8 +1,11 @@
 out/
 ota/
-build/
 instantnoodle/
 oneplus/
 instantnoodle-extras/
 chroot-files/chroot-log.sh
 fetch-instantnoodle-recovery-files-working.sh
+/images-2
+build/.gitlab-ci.yml
+.gitlab-ci.yml
+.gitlab-ci.yml

@@ -1,13 +1,32 @@
-deviceinfo_name="Oneplus 8"
-deviceinfo_manufacturer="Oneplus"
+############################
+# Basic device information
+############################
+
+deviceinfo_name="OnePlus 8"
+deviceinfo_manufacturer="OnePlus"
 deviceinfo_codename="instantnoodle"
 deviceinfo_arch="aarch64"
+deviceinfo_halium_version="10"
+
+##########
+# Kernel
+##########
+
 deviceinfo_kernel_source="https://github.com/scotthowson/halium_oneplus_instantnoodle"
 deviceinfo_kernel_source_branch="lineage-17.1"
-deviceinfo_kernel_defconfig="halium_instantnoodle_defconfig"
+deviceinfo_kernel_defconfig="instantnoodle_defconfig"
 deviceinfo_kernel_cmdline="androidboot.hardware=qcom androidboot.console=ttyMSM0 androidboot.memcg=1 lpm_levels.sleep_disabled=1 video=vfb:640x400,bpp=32,memsize=3072000 msm_rtb.filter=0x237 service_locator.enable=1 androidboot.usbcontroller=a600000.dwc3 androidboot.selinux=permissive swiotlb=2048 loop.max_part=7 cgroup.memory=nokmem,nosocket reboot=panic_warm selinux=0 apparmor=1 security=apparmor buildvariant=userdebug systempart=/dev/mapper/system_a console=tty0"
 deviceinfo_kernel_clang_compile="true"
+deviceinfo_kernel_llvm_compile="false"
+deviceinfo_kernel_use_lld="false"
 deviceinfo_kernel_use_dtc_ext="true"
+deviceinfo_kernel_image_name="Image"
+
+##############
+# Boot image
+##############
+
+deviceinfo_bootimg_header_version="2"
 deviceinfo_flash_pagesize="4096"
 deviceinfo_flash_offset_base="0x00000000"
 deviceinfo_flash_offset_kernel="0x00008000"
@@ -15,13 +34,40 @@ deviceinfo_flash_offset_ramdisk="0x01000000"
 deviceinfo_flash_offset_second="0x00000000"
 deviceinfo_flash_offset_tags="0x00000100"
 deviceinfo_flash_offset_dtb="0x01f00000"
-deviceinfo_bootimg_qcdt="false"
-deviceinfo_bootimg_header_version="2"
 deviceinfo_bootimg_os_version="10"
 deviceinfo_bootimg_os_patch_level="2020-07"
 deviceinfo_bootimg_partition_size="100663296"
+deviceinfo_bootimg_append_vbmeta="true"
+
+##########
+# DTB(O)
+##########
+
 deviceinfo_dtb="vendor/qcom/kona.dtb"
-deviceinfo_recovery_partition_size="104857600"
-deviceinfo_rootfs_image_sector_size="4096"
-deviceinfo_halium_version=10
-deviceinfo_ubuntu_touch_release=focal
+# deviceinfo_kernel_apply_overlay="true"
+# Uncomment and adjust if prebuilt DTB or DTBO files are used
+# deviceinfo_bootimg_prebuilt_dtb="arch/arm64/boot/dts/vendor/qcom/kona.dtb"
+# deviceinfo_prebuilt_dtbo="dtbo.img"
+deviceinfo_dtbo="vendor/qcom/instantnoodle-overlay-t0.dtbo vendor/qcom/instantnoodle-overlay-dvt.dtbo vendor/qcom/instantnoodlep-overlay-t0.dtbo vendor/qcom/instantnoodlev-overlay-t0.dtbo vendor/qcom/instantnoodle-overlay-evt1.dtbo vendor/qcom/instantnoodlep-overlay-dvt.dtbo vendor/qcom/instantnoodlep-overlay-evb.dtbo vendor/qcom/instantnoodlev-overlay-dvt.dtbo vendor/qcom/instantnoodlep-overlay-evt1.dtbo vendor/qcom/instantnoodlev-overlay-evt1.dtbo"
+
+###########
+# Ramdisk
+###########
+
+# deviceinfo_prebuilt_boot_ramdisk="halium-boot-ramdisk.img"
+# deviceinfo_prebuilt_boot_ramdisk_source="https://github.com/halium/initramfs-tools-halium/releases/download/dynparts/initrd.img-touch-aarch64"
+deviceinfo_ramdisk_compression="gzip"
+
+###########
+# Recovery
+###########
+
+# deviceinfo_has_recovery_partition="false"
+
+#################
+# Miscellaneous
+################
+
+# deviceinfo_rootfs_image_sector_size="4096"
+# deviceinfo_system_partition_size="3000M"
+deviceinfo_use_overlaystore="true"
