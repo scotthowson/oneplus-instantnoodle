@@ -9,3 +9,4 @@ fetch-instantnoodle-recovery-files-working.sh
 build/.gitlab-ci.yml
 .gitlab-ci.yml
 .gitlab-ci.yml
+/build
