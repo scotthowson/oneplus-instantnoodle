@@ -273,6 +273,66 @@ ip r
 
 telnet 192.168.2.15
 ```
+### Tethering Internet Connection
+Here’s how we can adjust the setup:
+1. Remove the Incorrect Default Route
+
+Remove the existing default route to avoid conflicts.
+
+```bash
+sudo ip route del default
+```
+
+2. Add the Correct Default Route
+
+Add the correct default route pointing to the host machine.
+
+```bash
+sudo ip route add default via 10.15.19.100 dev usb0
+```
+
+3. Update DNS Configuration
+
+Ensure the DNS servers are correctly set in /etc/resolv.conf:
+
+```bash
+sudo sh -c 'echo "nameserver 8.8.8.8" > /etc/resolv.conf'
+sudo sh -c 'echo "nameserver 8.8.4.4" >> /etc/resolv.conf'
+cat /etc/resolv.conf
+```
+
+4. Test Connectivity
+
+Test connectivity to ensure routing and DNS are correctly set up:
+
+```bash
+ping -c 4 8.8.8.8
+ping -c 4 google.com
+```
+
+Full Example:
+
+Here are the full commands to run in sequence on the phone:
+
+```bash
+sudo ip route del default
+sudo ip route add default via 10.15.19.100 dev usb0
+sudo sh -c 'echo "nameserver 8.8.8.8" > /etc/resolv.conf'
+sudo sh -c 'echo "nameserver 8.8.4.4" >> /etc/resolv.conf'
+cat /etc/resolv.conf
+ping -c 4 8.8.8.8
+ping -c 4 google.com
+```
+
+Host Machine Configuration:
+
+Ensure IP forwarding and correct IPTables settings on the host machine:
+```bash
+sudo sysctl -w net.ipv4.ip_forward=1
+sudo iptables -t nat -A POSTROUTING -o eno2 -j MASQUERADE
+sudo iptables -A FORWARD -i eno2 -o enp0s20f0u3 -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i enp0s20f0u3 -o eno2 -j ACCEPT
+```
 
 ## Troubleshooting
 Common issues and their solutions will be listed [here](https://docs.ubports.com/en/latest/porting/configure_test_fix/index.html). If you encounter any problems, refer to this section for guidance.
